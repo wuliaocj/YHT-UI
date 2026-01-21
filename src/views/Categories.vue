@@ -54,8 +54,8 @@
         <el-form-item label="分类名称" prop="name">
           <el-input v-model="categoryForm.name" />
         </el-form-item>
-        <el-form-item label="图标URL">
-          <el-input v-model="categoryForm.icon" placeholder="图片URL" />
+        <el-form-item label="图标">
+          <ImageUpload v-model="categoryForm.icon" :limit="1" />
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="categoryForm.description" type="textarea" :rows="3" />
@@ -84,6 +84,7 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Plus } from '@element-plus/icons-vue';
 import { categoryApi } from '@/api';
 import type { Category } from '@/types';
+import ImageUpload from '@/components/ImageUpload.vue';
 
 const loading = ref(false);
 const categories = ref<Category[]>([]);
@@ -107,10 +108,7 @@ const categoryRules: FormRules = {
 const loadCategories = async () => {
   loading.value = true;
   try {
-    // 注意：后端暂无获取分类列表接口，这里先使用空数组
-    // 实际应该调用 categoryApi.getAll()，但后端需要先实现该接口
-    categories.value = [];
-    ElMessage.warning('后端暂未实现分类列表接口，请联系开发人员');
+    categories.value = await categoryApi.getAll();
   } catch (error) {
     ElMessage.error('加载分类列表失败');
   } finally {

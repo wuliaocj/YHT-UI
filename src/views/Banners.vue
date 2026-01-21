@@ -60,8 +60,8 @@
         <el-form-item label="标题" prop="title">
           <el-input v-model="bannerForm.title" />
         </el-form-item>
-        <el-form-item label="图片URL" prop="imageUrl">
-          <el-input v-model="bannerForm.imageUrl" placeholder="请输入图片URL" />
+        <el-form-item label="图片" prop="imageUrl">
+          <ImageUpload v-model="bannerForm.imageUrl" :limit="1" />
         </el-form-item>
         <el-form-item label="链接类型">
           <el-radio-group v-model="bannerForm.linkType">
@@ -113,6 +113,7 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Plus } from '@element-plus/icons-vue';
 import { bannerApi } from '@/api';
 import type { Banner } from '@/types';
+import ImageUpload from '@/components/ImageUpload.vue';
 
 const loading = ref(false);
 const banners = ref<Banner[]>([]);

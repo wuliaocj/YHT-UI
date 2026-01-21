@@ -60,6 +60,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/Promotions.vue'),
         meta: { title: '促销活动管理' },
       },
+      {
+        path: 'image',
+        name: 'image',
+        component: () => import('@/views/Image.vue'),
+        meta: { title: '图片管理' },
+      },
     ],
   },
 ];

@@ -15,18 +15,21 @@
 6. **促销活动管理** - `/api/admin/promotion/list`, `/api/admin/promotion/save`, `/api/admin/promotion/delete/{id}`
 7. **商品管理** - `/api/product/admin/list`, `/api/product/admin/add`, `/api/product/{id}`
 
-### ⚠️ 部分对接（需要后端补充）
+### ✅ 完全对接（已完成）
 1. **分类管理**
+   - ✅ 获取分类列表：`/api/admin/category/list`
    - ✅ 保存分类：`/api/admin/category/save`
    - ✅ 删除分类：`/api/admin/category/delete/{id}`
-   - ❌ **缺失**：获取分类列表接口（前端已预留，后端需要实现 `GET /api/admin/category/list`）
 
 2. **商品管理**
    - ✅ 获取商品列表：`/api/product/admin/list`
    - ✅ 添加商品：`/api/product/admin/add`
    - ✅ 获取商品详情：`/api/product/{id}`
-   - ❌ **缺失**：编辑商品接口（前端已预留）
-   - ❌ **缺失**：删除商品接口（前端已预留）
+   - ✅ 编辑商品：`/api/product/admin/update`
+   - ✅ 删除商品：`/api/product/admin/delete/{id}`
+
+3. **图片上传**
+   - ✅ 上传图片：`/api/upload/image`（支持多图上传）
 
 ## 订单状态枚举（与后端一致）
 - 1: 待付款
@@ -72,9 +75,22 @@ npm run dev
 3. **响应处理**：统一处理 `HttpResult` 格式的响应
 4. **错误处理**：API调用失败会显示错误提示
 
-## 待完善功能
+## 最新更新（已完成）
 
-1. 后端需要补充分类列表查询接口
-2. 后端需要补充商品编辑和删除接口
-3. 仪表盘统计功能可以优化（建议后端提供统计接口）
-4. 订单详情可以显示订单项列表（需要后端支持）
+### 前端功能增强
+1. ✅ **分类管理**：已对接后端分类列表接口，支持完整的增删改查
+2. ✅ **商品管理**：已实现商品编辑和删除功能
+3. ✅ **图片上传组件**：新增可复用的图片上传组件，集成到商品、分类、轮播图管理
+4. ✅ **API层完善**：补充了所有缺失的API方法
+
+### 后端功能增强
+1. ✅ **商品删除接口**：新增 `POST /api/product/admin/delete/{id}`，支持级联删除商品规格
+2. ✅ **分类列表接口**：已存在 `GET /api/admin/category/list`
+3. ✅ **商品更新接口**：已存在 `POST /api/product/admin/update`
+
+## 建议优化项（可选）
+
+1. 仪表盘统计功能可以优化（建议后端提供专门的统计接口）
+2. 订单详情可以显示订单项列表（需要后端支持订单项查询）
+3. 图片上传可以增加进度条显示
+4. 可以添加数据导出功能（Excel）

@@ -43,16 +43,20 @@ export const productApi = {
   getAllProducts: () => api.get<Product[]>('/product/admin/list'),
   // 管理后台：添加商品
   addProduct: (product: any) => api.post('/product/admin/add', product),
-  // 注意：后端暂无编辑和删除接口，需要后端补充
+  // 管理后台：更新商品
+  updateProduct: (product: any) => api.post('/product/admin/update', product),
+  // 管理后台：删除商品（需要后端实现）
+  deleteProduct: (id: number) => api.post(`/product/admin/delete/${id}`),
 };
 
 // 分类API
 export const categoryApi = {
+  // 管理后台：获取分类列表
+  getAll: () => api.get<Category[]>('/admin/category/list'),
   // 管理后台：保存分类（新增或更新）
   save: (category: Category) => api.post('/admin/category/save', category),
   // 管理后台：删除分类
   delete: (id: number) => api.post(`/admin/category/delete/${id}`),
-  // 注意：后端暂无获取分类列表接口，需要后端补充
 };
 
 // 订单API

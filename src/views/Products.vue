@@ -93,7 +93,7 @@
           <el-input-number v-model="productForm.inventory" :min="0" />
         </el-form-item>
         <el-form-item label="主图" prop="mainImage">
-          <el-input v-model="productForm.mainImage" placeholder="图片URL" />
+          <ImageUpload v-model="productForm.mainImage" :limit="1" />
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="productForm.description" type="textarea" :rows="3" />
@@ -128,6 +128,7 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Plus } from '@element-plus/icons-vue';
 import { productApi, categoryApi } from '@/api';
 import type { Product, Category } from '@/types';
+import ImageUpload from '@/components/ImageUpload.vue';
 
 const loading = ref(false);
 const products = ref<Product[]>([]);
@@ -249,10 +250,16 @@ const handleAdd = () => {
   dialogVisible.value = true;
 };
 
-const handleEdit = (row: Product) => {
+const handleEdit = async (row: Product) => {
   dialogTitle.value = '编辑商品';
-  Object.assign(productForm, row);
-  dialogVisible.value = true;
+  try {
+    // 获取完整的商品详情（包含规格信息）
+    const productDetail = await productApi.getProductDetail(row.id!);
+    Object.assign(productForm, productDetail);
+    dialogVisible.value = true;
+  } catch (error: any) {
+    ElMessage.error(error.message || '获取商品详情失败');
+  }
 };
 
 const handleDelete = async (row: Product) => {
@@ -260,11 +267,9 @@ const handleDelete = async (row: Product) => {
     await ElMessageBox.confirm('确定要删除这个商品吗？', '提示', {
       type: 'warning',
     });
-    // 注意：后端暂无删除接口，这里先提示
-    ElMessage.warning('后端暂未实现删除接口，请联系开发人员');
-    // await productApi.deleteProduct(row.id!);
-    // ElMessage.success('删除成功');
-    // loadProducts();
+    await productApi.deleteProduct(row.id!);
+    ElMessage.success('删除成功');
+    loadProducts();
   } catch (error: any) {
     if (error !== 'cancel') {
       ElMessage.error(error.message || '删除失败');
@@ -277,8 +282,11 @@ const handleSubmit = async () => {
   await productFormRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        // 使用后端添加商品接口
-        await productApi.addProduct(productForm);
+        if (dialogTitle.value === '添加商品') {
+          await productApi.addProduct(productForm);
+        } else {
+          await productApi.updateProduct(productForm);
+        }
         ElMessage.success(dialogTitle.value === '添加商品' ? '添加成功' : '更新成功');
         dialogVisible.value = false;
         loadProducts();
