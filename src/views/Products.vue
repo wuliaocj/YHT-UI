@@ -176,13 +176,13 @@ const loadProducts = async () => {
   try {
     // 使用后端管理接口获取所有商品
     products.value = await productApi.getAllProducts();
-    
+
     // 前端筛选
     if (searchForm.categoryId) {
       products.value = products.value.filter(p => p.categoryId === searchForm.categoryId);
     }
     if (searchForm.keyword) {
-      products.value = products.value.filter(p => 
+      products.value = products.value.filter(p =>
         p.name.includes(searchForm.keyword)
       );
     }
@@ -217,6 +217,34 @@ const handleAdd = () => {
     isHot: 0,
     isNew: 0,
     isRecommend: 0,
+    cupTypeList:[
+      {
+        "specName": "大杯",
+        "priceAdd": 2.00
+      },
+      {
+        "specName": "中杯",
+        "priceAdd": 0.00
+      },
+      {
+        "specName": "小杯",
+        "priceAdd": -1.00
+      }
+    ],
+    toppingList:[
+      {
+        "specName": "珍珠",
+        "priceAdd": 1.00
+      },
+      {
+        "specName": "椰果",
+        "priceAdd": 1.00
+      },
+      {
+        "specName": "奶盖",
+        "priceAdd": 3.00
+      }
+    ]
   });
   dialogVisible.value = true;
 };
