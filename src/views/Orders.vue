@@ -121,7 +121,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { orderApi } from '@/api';
-import type { Order } from '@/types';
+import type { Order } from '@/types/order';
 
 const loading = ref(false);
 const orders = ref<Order[]>([]);

@@ -1,28 +1,22 @@
-import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
+import path from 'path'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
+      '@': path.resolve(__dirname, 'src') // 配置@别名
+    }
   },
   server: {
+    port: 3000,
     proxy: {
-      // 代理所有/api请求到后端服务器
       '/api': {
-        target: 'http://localhost:8080', // 本地开发环境，生产环境需要修改
+        target: 'http://localhost:8080', // 后端接口地址
         changeOrigin: true,
-        secure: false,
-        // rewrite: (path) => path.replace(/^\/api/, '/api') // 不需要重写，直接转发
+        // 保留 /api 前缀，因为前端API的baseURL已经是/api，后端也需要/api前缀
       }
     }
   }

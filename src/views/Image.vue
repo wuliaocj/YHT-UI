@@ -38,7 +38,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import axios from 'axios';
+import { ElMessage } from 'element-plus';
+import api from '@/api';
 
 // 选中的文件列表
 const selectedFiles = ref<File[]>([]);
@@ -115,10 +116,9 @@ const handleUpload = async () => {
       formData.append('files', file, file.name); // 'files'为后端接收的参数名
     });
 
-    // 发送上传请求（替换为你的后端接口）
-    const response = await // 修正后（直接指向后端8080端口）：
-        axios.post('http://localhost:8080/api/upload/image', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+    // 发送上传请求
+    const response = await api.post<string[]>('/upload/image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
 
       // 监听上传进度（可选）
       onUploadProgress: (progressEvent) => {
@@ -128,8 +128,9 @@ const handleUpload = async () => {
     });
 
     // 上传成功
+    ElMessage.success('上传成功！');
     uploadStatus.value = '上传成功！';
-    console.log('上传结果：', response.data);
+    console.log('上传结果：', response);
 
     // 清空状态（可选）
     setTimeout(() => {
@@ -137,8 +138,9 @@ const handleUpload = async () => {
       previewUrls.value = [];
       uploadStatus.value = '';
     }, 2000);
-  } catch (error) {
+  } catch (error: any) {
     // 上传失败
+    ElMessage.error(error.message || '上传失败，请重试！');
     uploadStatus.value = '上传失败，请重试！';
     console.error('上传错误：', error);
   } finally {

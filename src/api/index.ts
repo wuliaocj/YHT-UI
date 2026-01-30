@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { HttpResult, Product, Category, Order, User, Coupon, Banner, Promotion, PaymentRecord, Address } from '@/types';
+import type { HttpResult, Product, Category, Order, User, Coupon, Banner, Promotion } from '@/types';
 
 const api = axios.create({
   baseURL: '/api',
@@ -9,9 +9,12 @@ const api = axios.create({
 // 请求拦截器
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // 登录请求不需要携带 token
+    if (!config.url?.includes('/login')) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -31,6 +34,14 @@ api.interceptors.response.use(
     }
   },
   (error) => {
+    // 处理网络错误或其他错误
+    if (error.response) {
+      // 服务器返回了错误状态码
+      const errorData = error.response.data;
+      if (errorData && errorData.msg) {
+        return Promise.reject(new Error(errorData.msg));
+      }
+    }
     return Promise.reject(error);
   }
 );
@@ -45,7 +56,7 @@ export const productApi = {
   addProduct: (product: any) => api.post('/product/admin/add', product),
   // 管理后台：更新商品
   updateProduct: (product: any) => api.post('/product/admin/update', product),
-  // 管理后台：删除商品（需要后端实现）
+  // 管理后台：删除商品
   deleteProduct: (id: number) => api.post(`/product/admin/delete/${id}`),
 };
 
@@ -122,6 +133,10 @@ export const adminApi = {
     api.post<{ token: string; admin: any }>('/admin/login', { username, password }),
   // 获取当前管理员信息
   getCurrent: () => api.get('/admin/current'),
+  // 更新管理员信息
+  updateProfile: (profile: any) => api.post('/admin/profile/update', profile),
+  // 修改管理员密码
+  changePassword: (passwordData: { oldPassword: string; newPassword: string }) => api.post('/admin/password/change', passwordData),
 };
 
 // 支付API
@@ -129,7 +144,7 @@ export const paymentApi = {
   // 创建支付单（生成支付参数）
   createPayment: (orderNo: string) => api.post<any>('/payment/create', null, { params: { orderNo } }),
   // 查询支付状态
-  getPaymentStatus: (orderNo: string) => api.get<PaymentRecord>(`/payment/status/${orderNo}`),
+  getPaymentStatus: (orderNo: string) => api.get<any>(`/payment/status/${orderNo}`),
   // 模拟支付成功（测试用）
   mockPaymentSuccess: (orderNo: string) => api.post('/payment/mock/success', null, { params: { orderNo } }),
 };
@@ -137,9 +152,9 @@ export const paymentApi = {
 // 地址API
 export const addressApi = {
   // 获取用户地址列表
-  getList: (userId: number) => api.get<Address[]>(`/address/list/${userId}`),
+  getList: (userId: number) => api.get<any[]>(`/address/list/${userId}`),
   // 保存地址（新增或更新）
-  save: (address: Address) => api.post<Address>('/address/save', address),
+  save: (address: any) => api.post<any>('/address/save', address),
   // 删除地址
   delete: (id: number) => api.post(`/address/delete/${id}`),
 };

@@ -78,7 +78,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { userApi } from '@/api';
-import type { User } from '@/types';
+import type { User } from '@/types/user';
 
 const loading = ref(false);
 const users = ref<User[]>([]);
@@ -141,12 +141,16 @@ const handleReset = () => {
 
 const handleToggleStatus = async (row: User) => {
   try {
+    if (!row.id) {
+      ElMessage.error('用户ID不存在，无法操作');
+      return;
+    }
     const newStatus = row.status === 1 ? 0 : 1;
     const statusText = newStatus === 1 ? '启用' : '禁用';
     await ElMessageBox.confirm(`确定要${statusText}该用户吗？`, '提示', {
       type: 'warning',
     });
-    await userApi.updateStatus(row.id!, newStatus);
+    await userApi.updateStatus(row.id, newStatus);
     ElMessage.success('操作成功');
     loadUsers();
   } catch (error: any) {
