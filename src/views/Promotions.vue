@@ -11,7 +11,7 @@
         </div>
       </template>
 
-      <el-form :inline="true" :model="searchForm" class="search-form">
+      <el-form :inline="true" : ="searchForm" class="search-form">
         <el-form-item label="活动名称">
           <el-input v-model="searchForm.name" placeholder="请输入活动名称" clearable />
         </el-form-item>
